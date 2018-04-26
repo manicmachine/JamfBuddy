@@ -13,6 +13,8 @@ public class LocalUser {
     private boolean isAdmin;
     private boolean isFvEnabled;
 
+    public LocalUser(){}
+
     public String getUsername() {
         return username;
     }

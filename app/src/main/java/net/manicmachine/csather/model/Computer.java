@@ -9,9 +9,10 @@ import java.util.ArrayList;
 public class Computer extends Device {
 
     private ArrayList<String> mdmCapableUsers;
-    private ArrayList<ExtensionAttribute> extAttributes;
     private ArrayList<Hdd> storage;
     private ArrayList<LocalUser> localusers;
+
+    public Computer(){}
 
     public ArrayList<String> getMdmCapableUsers() {
         return mdmCapableUsers;
@@ -19,14 +20,6 @@ public class Computer extends Device {
 
     public void setMdmCapableUsers(ArrayList<String> mdmCapableUsers) {
         this.mdmCapableUsers = mdmCapableUsers;
-    }
-
-    public ArrayList<ExtensionAttribute> getExtAttributes() {
-        return extAttributes;
-    }
-
-    public void setExtAttributes(ArrayList<ExtensionAttribute> extAttributes) {
-        this.extAttributes = extAttributes;
     }
 
     public ArrayList<Hdd> getStorage() {

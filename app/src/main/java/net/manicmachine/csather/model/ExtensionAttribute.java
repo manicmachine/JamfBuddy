@@ -11,6 +11,13 @@ public class ExtensionAttribute {
     private String type;
     private String value;
 
+    public ExtensionAttribute(int id, String name, String type, String value) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.value = value;
+    }
+
     public int getId() {
         return id;
     }

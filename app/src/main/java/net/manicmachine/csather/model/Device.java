@@ -1,5 +1,6 @@
 package net.manicmachine.csather.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -13,10 +14,14 @@ public class Device {
     private HashMap<String, String> purchasingInfo;
     private HashMap<String, String> osInfo;
 
+    private ArrayList<ExtensionAttribute> extAttributes;
+
     private User user;
     private String department;
     private String building;
     private String room;
+
+    public Device(){}
 
     public HashMap<String, String> getGeneralInfo() {
         return generalInfo;
@@ -44,6 +49,14 @@ public class Device {
 
     public HashMap<String, String> getOsInfo() {
         return osInfo;
+    }
+
+    public ArrayList<ExtensionAttribute> getExtAttributes() {
+        return extAttributes;
+    }
+
+    public void setExtAttributes(ArrayList<ExtensionAttribute> extAttributes) {
+        this.extAttributes = extAttributes;
     }
 
     public void setOsInfo(HashMap<String, String> osInfo) {

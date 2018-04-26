@@ -23,6 +23,8 @@ public class Hdd {
         private double fv2Percent;
         private double partCapacityMB;
 
+        public Partition(){}
+
         public String getPartName() {
             return partName;
         }
@@ -71,6 +73,8 @@ public class Hdd {
             this.partCapacityMB = partCapacityMB;
         }
     }
+
+    public Hdd(){}
 
     public String getDisk() {
         return disk;

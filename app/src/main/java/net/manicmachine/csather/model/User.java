@@ -15,6 +15,12 @@ public class User {
     private int[] assignedComputers;
     private int[] assignedMobileDevices;
 
+    public User(int id, String name, String fullName) {
+        this.id = id;
+        this.name = name;
+        this.fullName = fullName;
+    }
+
     public int getId() {
         return id;
     }
