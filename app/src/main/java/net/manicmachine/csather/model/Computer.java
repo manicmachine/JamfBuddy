@@ -10,7 +10,7 @@ public class Computer extends Device {
 
     private ArrayList<String> mdmCapableUsers;
     private ArrayList<Hdd> storage;
-    private ArrayList<LocalUser> localusers;
+    private ArrayList<LocalUser> localUsers;
 
     public Computer(){}
 
@@ -31,10 +31,10 @@ public class Computer extends Device {
     }
 
     public ArrayList<LocalUser> getLocalusers() {
-        return localusers;
+        return localUsers;
     }
 
     public void setLocalusers(ArrayList<LocalUser> localusers) {
-        this.localusers = localusers;
+        this.localUsers = localusers;
     }
 }

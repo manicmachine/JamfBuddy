@@ -9,8 +9,6 @@ import java.util.HashMap;
 public class MobileDevice extends Device {
 
     private HashMap<String, String> securityInfo;
-    private HashMap<String, String> appInfo;
-    private HashMap<String, String> confProfileInfo;
 
     public MobileDevice(){}
 
@@ -20,21 +18,5 @@ public class MobileDevice extends Device {
 
     public void setSecurityInfo(HashMap<String, String> securityInfo) {
         this.securityInfo = securityInfo;
-    }
-
-    public HashMap<String, String> getAppInfo() {
-        return appInfo;
-    }
-
-    public void setAppInfo(HashMap<String, String> appInfo) {
-        this.appInfo = appInfo;
-    }
-
-    public HashMap<String, String> getConfProfileInfo() {
-        return confProfileInfo;
-    }
-
-    public void setConfProfileInfo(HashMap<String, String> confProfileInfo) {
-        this.confProfileInfo = confProfileInfo;
     }
 }

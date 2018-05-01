@@ -7,7 +7,6 @@ package net.manicmachine.csather.model;
 public class User {
 
     private int id;
-    private String name;
     private String fullName;
     private String email;
     private String phoneNumber;
@@ -15,9 +14,8 @@ public class User {
     private int[] assignedComputers;
     private int[] assignedMobileDevices;
 
-    public User(int id, String name, String fullName) {
+    public User(int id, String fullName) {
         this.id = id;
-        this.name = name;
         this.fullName = fullName;
     }
 
@@ -27,14 +25,6 @@ public class User {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getFullName() {
