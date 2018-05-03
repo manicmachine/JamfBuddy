@@ -6,11 +6,7 @@ import android.provider.BaseColumns;
  * Created by csather on 4/26/18.
  */
 
-public class ComputerContract {
-    public static final String DB_NAME = "net.manicmachine.csather.jamfbuddy";
-    public static final int DB_VERSION = 1;
-
-    public class ComputerEntry implements BaseColumns {
+public class ComputerContracEntry extends DBContract implements BaseColumns {
 
         // Jamf Tab - General
         public static final String TABLE = "computers";
