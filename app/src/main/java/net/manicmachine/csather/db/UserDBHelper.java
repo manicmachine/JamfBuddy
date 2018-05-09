@@ -5,12 +5,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class ComputerDBHelper extends SQLiteOpenHelper {
+public class UserDBHelper extends SQLiteOpenHelper {
 
-    private final static String TAG = "ComputerDBHelper";
-    private final static Class CONTRACT = ComputerContractEntry.class;
+    private final static String TAG = "UserDBHelper";
+    private final static Class CONTRACT = UserContractEntry.class;
 
-    public ComputerDBHelper(Context context) {
+    public UserDBHelper(Context context) {
         super(context, DBContract.DB_NAME, null, DBContract.DB_VERSION);
     }
 
@@ -23,13 +23,13 @@ public class ComputerDBHelper extends SQLiteOpenHelper {
             db.execSQL(createTableSql);
 
         } catch (IllegalAccessException | NoSuchFieldException ex) {
-            Log.d(TAG, "Error: Failed to create the Computer's database. ", ex.fillInStackTrace());
+            Log.d(TAG, "Error: Failed to create the User's database.", ex.fillInStackTrace());
         }
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + ComputerContractEntry.TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + MobileDeviceContractEntry.TABLE);
         this.onCreate(db);
     }
 }

@@ -9,10 +9,11 @@ import android.provider.BaseColumns;
 public class UserContractEntry extends DBContract implements BaseColumns {
 
     public static final String TABLE = "users";
-    public static final String COL_USER_ID = "id";
-    public static final String COL_USER_NAME = "full_name";
-    public static final String COL_USER_EMAIL = "email_address";
-    public static final String COL_USER_PHONE = "phone_number";
-    public static final String COL_USER_POSITION = "position";
-    
+
+    public static final String ID = "GEN_id";
+    public static final String COL_USER_NAME = "GEN_full_name";
+    public static final String COL_USER_EMAIL = "GEN_email_address";
+    public static final String COL_USER_PHONE = "GEN_phone_number";
+    public static final String COL_USER_POSITION = "GEN_position";
+
 }
