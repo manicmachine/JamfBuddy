@@ -10,14 +10,11 @@ public class Device {
 
     private HashMap<String, String> generalInfo;
     private HashMap<String, String> hardwareInfo;
-    private HashMap<String, String> purchasingInfo;
     private HashMap<String, String> osInfo;
+    private HashMap<String, String> purchasingInfo;
+    private HashMap<String, String> locInfo;
 
     private User user;
-
-    private String department;
-    private String building;
-    private String room;
 
     public Device(){}
 
@@ -61,27 +58,11 @@ public class Device {
         this.user = user;
     }
 
-    public String getDepartment() {
-        return department;
+    public HashMap<String, String> getLocInfo() {
+        return locInfo;
     }
 
-    public void setDepartment(String department) {
-        this.department = department;
-    }
-
-    public String getBuilding() {
-        return building;
-    }
-
-    public void setBuilding(String building) {
-        this.building = building;
-    }
-
-    public String getRoom() {
-        return room;
-    }
-
-    public void setRoom(String room) {
-        this.room = room;
+    public void setLocInfo(HashMap<String, String> locInfo) {
+        this.locInfo = locInfo;
     }
 }

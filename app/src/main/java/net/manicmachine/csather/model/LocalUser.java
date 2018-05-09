@@ -1,10 +1,12 @@
 package net.manicmachine.csather.model;
 
+import java.io.Serializable;
+
 /**
  * Created by csather on 4/24/18.
  */
 
-public class LocalUser {
+public class LocalUser implements Serializable {
 
     private String username;
     private String realName;

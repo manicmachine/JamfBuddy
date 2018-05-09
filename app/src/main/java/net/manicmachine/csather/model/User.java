@@ -14,10 +14,7 @@ public class User {
     private int[] assignedComputers;
     private int[] assignedMobileDevices;
 
-    public User(int id, String fullName) {
-        this.id = id;
-        this.fullName = fullName;
-    }
+    public User(){}
 
     public int getId() {
         return id;

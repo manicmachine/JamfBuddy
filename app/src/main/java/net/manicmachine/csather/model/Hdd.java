@@ -1,10 +1,12 @@
 package net.manicmachine.csather.model;
 
+import java.io.Serializable;
+
 /**
  * Created by csather on 4/24/18.
  */
 
-public class Hdd {
+public class Hdd implements Serializable {
     private String disk;
     private String hddModel;
     private String hddRevision;
