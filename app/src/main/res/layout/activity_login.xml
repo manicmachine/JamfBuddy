@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="net.manicmachine.csather.jamfbuddy.LoginActivity">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_weight="1"
+        android:text="Jamf Buddy"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- TODO: Nest similar views into a LinearView for better control -->
+    <TextView
+        android:id="@+id/jssHostnameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="JSS Pro"
+        android:textAppearance="@android:style/TextAppearance.Material.Headline"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/jssHostnameLabel"
+        app:layout_constraintVertical_bias="0.2" />
+
+    <EditText
+        android:id="@+id/jssHostname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="4dp"
+        android:ems="10"
+        android:hint="https://"
+        android:inputType="textNoSuggestions|textPersonName"
+        app:layout_constraintBaseline_toBaselineOf="@id/jssHostnameLabel"
+        app:layout_constraintStart_toEndOf="@+id/jssHostnameLabel" />
+
+    <TextView
+        android:id="@+id/usernameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/username"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/jssHostnameLabel"
+        app:layout_constraintVertical_bias="0.3" />
+
+    <TextView
+        android:id="@+id/passwordLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/password"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        app:layout_constraintEnd_toEndOf="@id/usernameLabel"
+        app:layout_constraintTop_toBottomOf="@id/usernameLabel" />
+
+    <TextView
+        android:id="@+id/hostnamePortDelimiter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="4dp"
+        android:text=":"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        app:layout_constraintBaseline_toBaselineOf="@id/jssHostname"
+        app:layout_constraintEnd_toStartOf="@+id/jssPort"
+        app:layout_constraintStart_toEndOf="@+id/jssHostname" />
+
+    <EditText
+        android:id="@+id/jssPort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="3"
+        android:hint="@string/port"
+        android:inputType="numberSigned"
+        android:singleLine="true"
+        android:layout_marginStart="4dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/jssHostname"
+        app:layout_constraintStart_toEndOf="@id/hostnamePortDelimiter" />
+
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintBaseline_toBaselineOf="@id/usernameLabel"
+        app:layout_constraintStart_toEndOf="@id/usernameLabel" />
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@id/passwordLabel"
+        app:layout_constraintBaseline_toBaselineOf="@id/passwordLabel"
+        app:layout_constraintEnd_toEndOf="@id/username"/>
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="150dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="8dp"
+        android:text="Login!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</android.support.constraint.ConstraintLayout>
