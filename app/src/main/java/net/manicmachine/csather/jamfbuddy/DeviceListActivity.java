@@ -1,5 +1,6 @@
 package net.manicmachine.csather.jamfbuddy;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,7 +20,25 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import net.manicmachine.csather.model.Computer;
+import net.manicmachine.csather.model.MobileDevice;
+import net.manicmachine.csather.model.User;
+import net.manicmachine.csather.network.JssApi;
+import net.manicmachine.csather.network.VolleyCallback;
+
+import org.json.JSONObject;
+
+import java.net.HttpURLConnection;
+
 public class DeviceListActivity extends AppCompatActivity {
+
+    JssApi jssApi;
+    Bundle userInfo;
+    Computer[] computers;
+    MobileDevice[] mobileDevices;
+    User[] users;
+
+    public final static String TAG = "net.manicmachine.csather.DeviceListActivity";
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -41,6 +60,15 @@ public class DeviceListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_list);
 
+        userInfo = getIntent().getExtras().getBundle("userInfo");
+
+        jssApi = new JssApi();
+
+        jssApi.setHostname(userInfo.getString("hostname"));
+        jssApi.setPort(userInfo.getString("port"));
+        jssApi.setUsername(userInfo.getString(getString(R.string.username)));
+        jssApi.setPassword(userInfo.getString(getString(R.string.password)));
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
@@ -55,15 +83,6 @@ public class DeviceListActivity extends AppCompatActivity {
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
     }
 
@@ -84,6 +103,26 @@ public class DeviceListActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            //TODO: Determine what tab is currently selected and pass it to populate().
+            jssApi.populate("computers", new VolleyCallback() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    switch (jssApi.getStatusCode()) {
+                        case HttpURLConnection.HTTP_OK:
+
+                            break;
+                        case HttpURLConnection.HTTP_FORBIDDEN:
+                            //TODO: Setup toast to notify the user their server rejected the login: HTTP 403
+                            break;
+                        case HttpURLConnection.HTTP_UNAUTHORIZED:
+                            //TODO: Setup toast to notify the user their credentials were incorrect: HTTP 401
+                            break;
+                        case HttpURLConnection.HTTP_INTERNAL_ERROR:
+                            //TODO: Setup toast to notify the user their JSS encountered an error: HTTP 500
+                            break;
+                }
+            }});
+
             return true;
         }
 

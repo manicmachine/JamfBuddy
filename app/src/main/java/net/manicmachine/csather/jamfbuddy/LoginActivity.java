@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.android.volley.toolbox.Volley;
 
@@ -14,11 +15,12 @@ import net.manicmachine.csather.network.VolleyCallback;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static final String TAG = "LoginActivity";
+    public static final String TAG = "net.manicmachine.csather.LoginActivity";
 
     EditText hostnameText;
     EditText portText;
@@ -35,7 +37,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         jssApi = new JssApi();
-        jssApi.queue = Volley.newRequestQueue(this);
+
+        App.setContext(this);
 
         userInfo = new Bundle();
 
@@ -79,10 +82,13 @@ public class LoginActivity extends AppCompatActivity {
                                 startActivity(intent);
                                 break;
                             case HttpURLConnection.HTTP_FORBIDDEN:
-                                //TODO: Setup toast to notify the user their server rejected the login.
+                                //TODO: Setup toast to notify the user their server rejected the login: HTTP 403
                                 break;
                             case HttpURLConnection.HTTP_UNAUTHORIZED:
-                                //TODO: Setup toast to notify the user their credentials were incorrect.
+                                //TODO: Setup toast to notify the user their credentials were incorrect: HTTP 401
+                                break;
+                            case HttpURLConnection.HTTP_INTERNAL_ERROR:
+                                //TODO: Setup toast to notify the user their JSS encountered an error: HTTP 500
                                 break;
                         }
                     }
