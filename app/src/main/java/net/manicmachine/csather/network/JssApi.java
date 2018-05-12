@@ -1,17 +1,16 @@
 package net.manicmachine.csather.network;
 
-import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
@@ -20,7 +19,7 @@ import java.util.Map;
 
 public class JssApi {
 
-    private static final String TAG = "JssApi";
+    private static final String TAG = "net.manicmachine.csather.JssApi";
 
     private String hostname;
     private String port;
@@ -34,14 +33,12 @@ public class JssApi {
 
     public void authenticate(final VolleyCallback callback) {
 
-        String fqdn = hostname + ":" + port;
-        String apiEndpoint = "/JSSResource/accounts/username/";
-        String fullUrl = fqdn + apiEndpoint + username;
-        System.out.println("FQDN: " + fqdn + ", API:" + apiEndpoint + ", Full URL:" + fullUrl);
+        String url = buildApiUrl("accounts/username/" + username);
+        System.out.println("Full URL:" + url);
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
-                fullUrl,
+                url,
                 null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -52,9 +49,17 @@ public class JssApi {
                     }
                 },
                 new Response.ErrorListener() {
+                    // There's a product issue with the JSS where sometimes it'll reply with XML
+                    // when asked for JSON. The onErrorResponse will take this into account.
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d(TAG, error.toString());
+                        String errorString = error.toString().contains("<?xml") ?
+                                "Received XML response instead of JSON. Trying again..." :
+                                error.toString();
+
+                        Log.d(TAG, "Volley Error: " + errorString);
+
+                        authenticate(callback);
                     }
                 }) {
 
@@ -71,7 +76,6 @@ public class JssApi {
                 headers.put("User-Agent", "Pocket Admin");
                 headers.put("Content-Type", "application/json; charset=utf-8");
 
-                System.out.println(headers.toString());
                 return headers;
 
             }
@@ -85,7 +89,81 @@ public class JssApi {
             }
         };
 
-        queue.add(request);
+        // Increase timeout to compensate for slow JSS'
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                5000,
+                3,
+                2
+        ));
+
+        RequestQueueSingleton.add(request);
+    }
+
+    public HashMap<String, String> populate(final String target, final VolleyCallback callback) {
+        HashMap<String, String> jssResponse = new HashMap<>();
+
+        String url = buildApiUrl("computers");
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.println(response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        String errorString = error.toString().contains("<?xml") ?
+                                "Received XML response instead of JSON. Trying again..." :
+                                error.toString();
+
+                        Log.d(TAG, "Volley Error: " + errorString);
+
+                        populate(target, callback);
+                    }
+                }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+
+                HashMap<String, String> headers = new HashMap<>();
+                String credentials = username + ":" + password;
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(),
+                        Base64.NO_WRAP);
+
+                headers.put("Authorization", auth);
+                headers.put("User-Agent", "Pocket Admin");
+                headers.put("Content-Type", "application/json; charset=utf-8");
+
+                return headers;
+
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                5000,
+                3,
+                2
+        ));
+
+        RequestQueueSingleton.add(request);
+
+        return jssResponse;
+    }
+
+    public String buildApiUrl(String endPoint) {
+
+        StringBuilder fullUrl = new StringBuilder();
+
+        fullUrl.append(hostname + ":" + port);
+        fullUrl.append("/JSSResource/" + endPoint);
+
+        return fullUrl.toString();
+
     }
 
 
