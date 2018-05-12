@@ -111,6 +111,7 @@ public class JssApi {
                     @Override
                     public void onResponse(JSONObject response) {
                         System.out.println(response.toString());
+                        callback.onSuccess(response);
                     }
                 },
                 new Response.ErrorListener() {
@@ -141,6 +142,12 @@ public class JssApi {
 
                 return headers;
 
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                statusCode = response.statusCode;
+                return super.parseNetworkResponse(response);
             }
         };
 
