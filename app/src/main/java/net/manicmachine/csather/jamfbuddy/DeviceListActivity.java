@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,9 +27,13 @@ import net.manicmachine.csather.model.User;
 import net.manicmachine.csather.network.JssApi;
 import net.manicmachine.csather.network.VolleyCallback;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class DeviceListActivity extends AppCompatActivity {
 
@@ -109,8 +114,38 @@ public class DeviceListActivity extends AppCompatActivity {
                 public void onSuccess(JSONObject response) {
                     switch (jssApi.getStatusCode()) {
                         case HttpURLConnection.HTTP_OK:
+                            try {
+                                System.out.println("Response: " + response.toString());
+                                JSONArray computerArray = response.getJSONArray("computers");
+                                System.out.println("Json Array: " + computerArray.toString());
+                                computers = new Computer[computerArray.length()];
+                                System.out.println("Computer array length:" + Integer.toString(computers.length));
 
-                            break;
+                                for(int i = 0; i < computerArray.length(); i++) {
+
+                                    JSONObject computerJson = computerArray.getJSONObject(i);
+                                    System.out.println("Computer Json #" + Integer.toString(i) + ": " + computerJson.toString());
+                                    Computer newComputer = new Computer();
+                                    HashMap<String, String> properties = new HashMap<>();
+                                    Iterator<?> values = computerJson.keys();
+
+                                    while(values.hasNext()) {
+
+                                        String value = (String) values.next();
+                                        properties.put(value, computerJson.get(value).toString());
+
+                                        System.out.println("Json key: " + value + ", Property: " + properties.get(value).toString());
+
+                                    }
+
+                                    newComputer.setGeneralInfo(properties);
+                                    computers[i] = newComputer;
+
+                                }
+                            } catch (JSONException ex) {
+                                Log.d(TAG, "Error: Failed to unpack JSON response. " + ex.getMessage());
+                            }
+                             break;
                         case HttpURLConnection.HTTP_FORBIDDEN:
                             //TODO: Setup toast to notify the user their server rejected the login: HTTP 403
                             break;
