@@ -55,17 +55,18 @@ public class ComputerDaoImpl implements ComputerDao {
 
         String[] columns = cursor.getColumnNames();
 
+        //TODO: Make column prefixes static variables.
         for (String column : columns) {
             if (column.contains("GEN_")) {
-                generalInfo.put(column, cursor.getString(cursor.getColumnIndex(column)));
+                generalInfo.put(column.replace("GEN_", ""), cursor.getString(cursor.getColumnIndex(column)));
             } else if (column.contains("HW_")) {
-                hardwareInfo.put(column, cursor.getString(cursor.getColumnIndex(column)));
+                hardwareInfo.put(column.replace("HW_", ""), cursor.getString(cursor.getColumnIndex(column)));
             } else if (column.contains("OPSYS_")) {
-                osInfo.put(column, cursor.getString(cursor.getColumnIndex(column)));
+                osInfo.put(column.replace("OPSYS_", ""), cursor.getString(cursor.getColumnIndex(column)));
             } else if (column.contains("PUR_")) {
-                purchasingInfo.put(column, cursor.getString(cursor.getColumnIndex(column)));
+                purchasingInfo.put(column.replace("PUR_", ""), cursor.getString(cursor.getColumnIndex(column)));
             } else if (column.contains("LOC_")) {
-                locInfo.put(column, cursor.getString(cursor.getColumnIndex(column)));
+                locInfo.put(column.replace("LOC_", ""), cursor.getString(cursor.getColumnIndex(column)));
             } else if (column.contains("_serialized")) {
                 try {
 
