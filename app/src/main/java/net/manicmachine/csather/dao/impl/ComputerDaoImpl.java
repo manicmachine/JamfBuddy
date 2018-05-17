@@ -3,12 +3,13 @@ package net.manicmachine.csather.dao.impl;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import net.manicmachine.csather.dao.ComputerDao;
 import net.manicmachine.csather.db.ComputerContractEntry;
-import net.manicmachine.csather.db.ComputerDBHelper;
+import net.manicmachine.csather.db.DBHelper;
 import net.manicmachine.csather.model.Computer;
 import net.manicmachine.csather.model.Hdd;
 import net.manicmachine.csather.model.LocalUser;
@@ -24,11 +25,17 @@ import java.util.Map;
 
 public class ComputerDaoImpl implements ComputerDao {
 
-    private static final String TAG = "ComputerDaoImpl";
-    private ComputerDBHelper mHelper;
+    private static final String TAG = "net.manicmachine.csather.dao.impl.ComputerDaoImpl";
+    private static final String GEN_PREFIX = "GEN_";
+    private static final String HW_PREFIX = "HW_";
+    private static final String OPSYS_PREFIX = "OPSYS_";
+    private static final String PUR_PREFIX = "PUR_";
+    private static final String LOC_PREFIX = "LOC_";
+
+    private DBHelper mHelper;
 
     public ComputerDaoImpl(Context context) {
-        this.mHelper = new ComputerDBHelper(context);
+        this.mHelper = new DBHelper(context);
     }
 
     @Override
@@ -55,18 +62,17 @@ public class ComputerDaoImpl implements ComputerDao {
 
         String[] columns = cursor.getColumnNames();
 
-        //TODO: Make column prefixes static variables.
         for (String column : columns) {
-            if (column.contains("GEN_")) {
-                generalInfo.put(column.replace("GEN_", ""), cursor.getString(cursor.getColumnIndex(column)));
-            } else if (column.contains("HW_")) {
-                hardwareInfo.put(column.replace("HW_", ""), cursor.getString(cursor.getColumnIndex(column)));
-            } else if (column.contains("OPSYS_")) {
-                osInfo.put(column.replace("OPSYS_", ""), cursor.getString(cursor.getColumnIndex(column)));
-            } else if (column.contains("PUR_")) {
-                purchasingInfo.put(column.replace("PUR_", ""), cursor.getString(cursor.getColumnIndex(column)));
-            } else if (column.contains("LOC_")) {
-                locInfo.put(column.replace("LOC_", ""), cursor.getString(cursor.getColumnIndex(column)));
+            if (column.contains(GEN_PREFIX)) {
+                generalInfo.put(column.replace(GEN_PREFIX, ""), cursor.getString(cursor.getColumnIndex(column)));
+            } else if (column.contains(HW_PREFIX)) {
+                hardwareInfo.put(column.replace(HW_PREFIX, ""), cursor.getString(cursor.getColumnIndex(column)));
+            } else if (column.contains(OPSYS_PREFIX)) {
+                osInfo.put(column.replace(OPSYS_PREFIX, ""), cursor.getString(cursor.getColumnIndex(column)));
+            } else if (column.contains(PUR_PREFIX)) {
+                purchasingInfo.put(column.replace(PUR_PREFIX, ""), cursor.getString(cursor.getColumnIndex(column)));
+            } else if (column.contains(LOC_PREFIX)) {
+                locInfo.put(column.replace(LOC_PREFIX, ""), cursor.getString(cursor.getColumnIndex(column)));
             } else if (column.contains("_serialized")) {
                 try {
 
@@ -112,8 +118,6 @@ public class ComputerDaoImpl implements ComputerDao {
     @Override
     public ArrayList<Computer> getAllComputers() {
         ArrayList<Computer> computers = new ArrayList<>();
-        HashMap<String, String> generalInfo = new HashMap<>();
-        HashMap<String, String> hardwareInfo = new HashMap<>();
 
         SQLiteDatabase db = this.mHelper.getReadableDatabase();
         Cursor cursor = db.query(ComputerContractEntry.TABLE,
@@ -126,27 +130,29 @@ public class ComputerDaoImpl implements ComputerDao {
                 null, null, null, null, null);
 
         while (cursor.moveToNext()) {
-            Computer newComputer = new Computer();
 
-            generalInfo.put(ComputerContractEntry.ID,
+            Computer newComputer = new Computer();
+            HashMap<String, String> generalInfo = new HashMap<>();
+            HashMap<String, String> hardwareInfo = new HashMap<>();
+
+            generalInfo.put(ComputerContractEntry.ID.replace(GEN_PREFIX, ""),
                     Integer.toString(cursor.getInt(cursor.getColumnIndex(ComputerContractEntry.ID))));
-            generalInfo.put(ComputerContractEntry.COL_COMP_GEN_NAME,
+            generalInfo.put(ComputerContractEntry.COL_COMP_GEN_NAME.replace(GEN_PREFIX, ""),
                     cursor.getString(cursor.getColumnIndex(ComputerContractEntry.COL_COMP_GEN_NAME)));
-            generalInfo.put(ComputerContractEntry.COL_COMP_GEN_ASSET,
+            generalInfo.put(ComputerContractEntry.COL_COMP_GEN_ASSET.replace(GEN_PREFIX, ""),
                     cursor.getString(cursor.getColumnIndex(ComputerContractEntry.COL_COMP_GEN_ASSET)));
-            generalInfo.put(ComputerContractEntry.COL_COMP_GEN_LAST_INV,
+            generalInfo.put(ComputerContractEntry.COL_COMP_GEN_LAST_INV.replace(GEN_PREFIX, ""),
                     Integer.toString(cursor.getInt(cursor.getColumnIndex(ComputerContractEntry.COL_COMP_GEN_LAST_INV))));
 
-            hardwareInfo.put(ComputerContractEntry.COL_COMP_HW_MODEL,
+            hardwareInfo.put(ComputerContractEntry.COL_COMP_HW_MODEL.replace(HW_PREFIX, ""),
                     cursor.getString(cursor.getColumnIndex(ComputerContractEntry.COL_COMP_HW_MODEL)));
 
+            Log.d(TAG, "General Info: " + generalInfo.toString() + ", " + hardwareInfo.toString());
             newComputer.setGeneralInfo(generalInfo);
             newComputer.setHardwareInfo(hardwareInfo);
 
             computers.add(newComputer);
 
-            generalInfo.clear();
-            hardwareInfo.clear();
         }
 
         return computers;
@@ -169,36 +175,36 @@ public class ComputerDaoImpl implements ComputerDao {
         ContentValues values = new ContentValues();
 
         for (Map.Entry<String, String> entry : computer.getGeneralInfo().entrySet()) {
-            String column = entry.getKey();
-            String value = entry.getValue();
+            String column = GEN_PREFIX + entry.getKey().toString();
+            String value = entry.getValue().toString();
 
             values.put(column, value);
         }
 
         for (Map.Entry<String, String> entry : computer.getHardwareInfo().entrySet()) {
-            String column = entry.getKey();
-            String value = entry.getValue();
+            String column = HW_PREFIX + entry.getKey().toString();
+            String value = entry.getValue().toString();
 
             values.put(column, value);
         }
 
         for (Map.Entry<String, String> entry : computer.getOsInfo().entrySet()) {
-            String column = entry.getKey();
-            String value = entry.getValue();
+            String column = OPSYS_PREFIX + entry.getKey().toString();
+            String value = entry.getValue().toString();
 
             values.put(column, value);
         }
 
         for (Map.Entry<String, String> entry : computer.getPurchasingInfo().entrySet()) {
-            String column = entry.getKey();
-            String value = entry.getValue();
+            String column = PUR_PREFIX + entry.getKey().toString();
+            String value = entry.getValue().toString();
 
             values.put(column, value);
         }
 
         for (Map.Entry<String, String> entry : computer.getLocInfo().entrySet()) {
-            String column = entry.getKey();
-            String value = entry.getValue();
+            String column = LOC_PREFIX + entry.getKey().toString();
+            String value = entry.getValue().toString();
 
             values.put(column, value);
         }
@@ -243,5 +249,14 @@ public class ComputerDaoImpl implements ComputerDao {
                 SQLiteDatabase.CONFLICT_REPLACE);
 
         db.close();
+    }
+
+    @Override
+    public int computerCount() {
+        SQLiteDatabase db = this.mHelper.getReadableDatabase();
+        long count = DatabaseUtils.queryNumEntries(db, ComputerContractEntry.TABLE);
+        db.close();
+
+        return (int)count;
     }
 }

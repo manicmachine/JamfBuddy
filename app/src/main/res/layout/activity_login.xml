@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="JSS Pro"
+        android:text="Jamf Pro"
         android:textAppearance="@android:style/TextAppearance.Material.Headline"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,7 +38,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="4dp"
         android:ems="10"
-        android:hint="https://"
+        android:text="https://csather.jamfcloud.com"
         android:inputType="textNoSuggestions|textPersonName"
         app:layout_constraintBaseline_toBaselineOf="@id/jssHostnameLabel"
         app:layout_constraintStart_toEndOf="@+id/jssHostnameLabel" />
@@ -83,7 +83,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="3"
-        android:hint="@string/port"
+        android:text="443"
         android:inputType="numberSigned"
         android:singleLine="true"
         android:layout_marginStart="4dp"
@@ -97,6 +97,7 @@
         android:layout_marginStart="8dp"
         android:ems="10"
         android:inputType="text"
+        android:text="admin"
         app:layout_constraintBaseline_toBaselineOf="@id/usernameLabel"
         app:layout_constraintStart_toEndOf="@id/usernameLabel" />
 
@@ -107,6 +108,7 @@
         android:inputType="textPassword"
         android:ems="10"
         android:layout_marginStart="8dp"
+        android:text="jamf1234"
         app:layout_constraintStart_toEndOf="@id/passwordLabel"
         app:layout_constraintBaseline_toBaselineOf="@id/passwordLabel"
         app:layout_constraintEnd_toEndOf="@id/username"/>

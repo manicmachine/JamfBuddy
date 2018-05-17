@@ -11,4 +11,5 @@ public interface MobileDao {
 
     void deleteMobileDevice(int mobileDeviceId);
     void addMobileDevice(MobileDevice mobileDevice);
+    int mobileCount();
 }

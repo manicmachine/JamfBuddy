@@ -10,7 +10,10 @@ public class MobileDevice extends Device {
 
     private HashMap<String, String> securityInfo;
 
-    public MobileDevice(){}
+    public MobileDevice(){
+        super();
+        this.securityInfo = new HashMap<>();
+    }
 
     public HashMap<String, String> getSecurityInfo() {
         return securityInfo;

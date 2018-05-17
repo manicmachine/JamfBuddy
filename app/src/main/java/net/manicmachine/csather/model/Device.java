@@ -16,7 +16,13 @@ public class Device {
 
     private User user;
 
-    public Device(){}
+    public Device(){
+        this.generalInfo = new HashMap<>();
+        this.hardwareInfo = new HashMap<>();
+        this.osInfo = new HashMap<>();
+        this.purchasingInfo = new HashMap<>();
+        this.locInfo = new HashMap<>();
+    }
 
     public HashMap<String, String> getGeneralInfo() {
         return generalInfo;

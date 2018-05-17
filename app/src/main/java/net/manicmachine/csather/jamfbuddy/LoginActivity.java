@@ -1,22 +1,21 @@
 package net.manicmachine.csather.jamfbuddy;
+
+import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import com.android.volley.toolbox.Volley;
-
+import net.manicmachine.csather.dao.impl.ComputerDaoImpl;
+import net.manicmachine.csather.dao.impl.MobileDaoImpl;
+import net.manicmachine.csather.dao.impl.UserDaoImpl;
 import net.manicmachine.csather.network.JssApi;
 import net.manicmachine.csather.network.VolleyCallback;
 
 import org.json.JSONObject;
-
-import java.io.Serializable;
-import java.net.HttpURLConnection;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -28,7 +27,13 @@ public class LoginActivity extends AppCompatActivity {
     EditText passwordText;
     Button login;
     JssApi jssApi;
-    Bundle userInfo;
+    UserInfo userInfo;
+    Boolean isValid;
+    ComputerDaoImpl computerDao;
+    MobileDaoImpl mobileDao;
+    UserDaoImpl userDao;
+    ProgressDialog progressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +41,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        jssApi = new JssApi();
-
+        isValid = true;
+        jssApi = JssApi.get();
+        userInfo = UserInfo.get(this);
         App.setContext(this);
 
-        userInfo = new Bundle();
+        computerDao = new ComputerDaoImpl(App.getContext());
+        mobileDao = new MobileDaoImpl(App.getContext());
+        userDao = new UserDaoImpl(App.getContext());
 
         hostnameText = (EditText)this.findViewById(R.id.jssHostname);
         portText = (EditText)this.findViewById(R.id.jssPort);
@@ -48,52 +56,129 @@ public class LoginActivity extends AppCompatActivity {
         passwordText = (EditText) this.findViewById(R.id.password);
         login = (Button) this.findViewById(R.id.loginButton);
 
+
+
         login.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                //TODO: Add validation to the entry fields
 
                 // Set userInfo, populate the jssApi object and attempt to authenticate with the JSS.
                 // Once authenticated, switch to the DeviceListActivity. Otherwise display an error
                 // to the user.
-                userInfo.putString(getString(R.string.username), !Util.isEmpty(usernameText) ? usernameText.getText().toString() : null);
-                userInfo.putString(getString(R.string.password), !Util.isEmpty(passwordText) ? passwordText.getText().toString() : null);
-                userInfo.putString("hostname", !Util.isEmpty(hostnameText) ? hostnameText.getText().toString() : null);
-                userInfo.putString("port", !Util.isEmpty(portText) ? portText.getText().toString() : null);
+                if (Util.isEmpty(usernameText)) {
+                    isValid = false;
+                    Util.displayError(App.getContext(), "Please provide a valid username.");
+                }
 
-                jssApi.setHostname(userInfo.getString("hostname"));
-                jssApi.setPort(userInfo.getString("port"));
-                jssApi.setUsername(userInfo.getString(getString(R.string.username)));
-                jssApi.setPassword(userInfo.getString(getString(R.string.password)));
+                if (Util.isEmpty(passwordText)) {
+                    isValid = false;
+                    Util.displayError(App.getContext(),"Please provide a valid password.");
+                }
 
-                Log.d(TAG, "onClick:" + jssApi.getHostname() + ":" + jssApi.getPort());
-
-                jssApi.authenticate(new VolleyCallback() {
-
-                    // Create a callback for Volley so that we can take an action based upon the
-                    // response provided.
-
-                    @Override
-                    public void onSuccess(JSONObject response) {
-                        switch (jssApi.getStatusCode()) {
-                            case HttpURLConnection.HTTP_OK:
-                                Intent intent = new Intent(getApplicationContext(), DeviceListActivity.class);
-                                intent.putExtra("userInfo", userInfo);
-                                startActivity(intent);
-                                break;
-                            case HttpURLConnection.HTTP_FORBIDDEN:
-                                //TODO: Setup toast to notify the user their server rejected the login: HTTP 403
-                                break;
-                            case HttpURLConnection.HTTP_UNAUTHORIZED:
-                                //TODO: Setup toast to notify the user their credentials were incorrect: HTTP 401
-                                break;
-                            case HttpURLConnection.HTTP_INTERNAL_ERROR:
-                                //TODO: Setup toast to notify the user their JSS encountered an error: HTTP 500
-                                break;
+                if (Util.isEmpty(hostnameText)) {
+                    isValid = false;
+                    Util.displayError(App.getContext(), "Please provide a valid hostname/IP address.");
+                } else {
+                    if(!hostnameText.getText().toString().toLowerCase().contains("https://")){
+                        if(!hostnameText.getText().toString().toLowerCase().contains("http://")) {
+                            String address = "https://" + hostnameText.getText().toString().toLowerCase();
+                            hostnameText.setText(address);
+                        } else {
+                            hostnameText.setText(hostnameText.getText().toString().replace("http://", "https://"));
                         }
+
                     }
-                });
+                }
+
+                if (Util.isEmpty(portText)) {
+                    isValid = false;
+                    Util.displayError(App.getContext(),"Please provide a valid port.");
+                }
+
+                if (isValid) {
+                    userInfo.setUsername(usernameText.getText().toString());
+                    userInfo.setPassword(passwordText.getText().toString());
+                    userInfo.setHostname(hostnameText.getText().toString());
+                    userInfo.setPort(portText.getText().toString());
+
+                    jssApi.setHostname(userInfo.getHostname());
+                    jssApi.setPort(userInfo.getPort());
+                    jssApi.setUsername(userInfo.getUsername());
+                    jssApi.setPassword(userInfo.getPassword());
+
+                    progressDialog = ProgressDialog.show(App.getContext(), "", "Contacting Jamf Pro Server...", false);
+                    jssApi.authenticate(new VolleyCallback() {
+
+                        // Create a callback for Volley so that we can take an action based upon the
+                        // response provided.
+
+                        @Override
+                        public void onSuccess(JSONObject response) {
+                            progressDialog.dismiss();
+                            jssApi.setConnected(true);
+                            Intent intent = new Intent(getApplicationContext(), DeviceListActivity.class);
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onError(int errorCode) {
+
+                            progressDialog.dismiss();
+                            jssApi.setConnected(false);
+
+                            switch(errorCode) {
+                                case JssApi.HTTP_UNAUTHORIZED:
+                                    Util.displayError(App.getContext(),
+                                            "Unauthorized error received from server. Verify your credentials.");
+                                    break;
+                                case JssApi.HTTP_FORBIDDEN:
+                                    Util.displayError(App.getContext(),
+                                            "Forbidden error received from server. Verify your credentials and privileges.");
+                                    break;
+                                case JssApi.HTTP_TIMEOUT:
+                                    Util.displayError(App.getContext(),
+                                            "The server request timed out. Verify your hostname/port and try again.");
+                                    if(hasData()) {
+                                        offlinePrompt();
+                                    }
+                                    break;
+                                case JssApi.HTTP_INTERNAL_ERROR:
+                                    Util.displayError(App.getContext(),
+                                            "The server encountered an unknown internal error.");
+                                    break;
+                                case JssApi.HTTP_SERVICE_UNAVAIL:
+                                    Util.displayError(App.getContext(),
+                                            "Unknown host error encountered. Verify your internet connection.");
+                                    if(hasData()) {
+                                        offlinePrompt();
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                        }
+                    });
+                }
             }
         });
+    }
+
+    public boolean hasData() {
+        int computerRecords = computerDao.computerCount();
+        int mobileRecords = mobileDao.mobileCount();
+        int userRecords = userDao.userCount();
+
+        if (computerRecords + mobileRecords + userRecords > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void offlinePrompt() {
+        FragmentManager manager = getFragmentManager();
+        OfflineModeFragment offlineModeFragment = new OfflineModeFragment();
+
+        offlineModeFragment.show(manager, OfflineModeFragment.TAG);
     }
 }

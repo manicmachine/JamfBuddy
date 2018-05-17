@@ -3,10 +3,11 @@ package net.manicmachine.csather.dao.impl;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
 import net.manicmachine.csather.dao.UserDao;
-import net.manicmachine.csather.db.MobileDeviceDBHelper;
+import net.manicmachine.csather.db.DBHelper;
 import net.manicmachine.csather.db.UserContractEntry;
 import net.manicmachine.csather.db.UserDevicesContractEntry;
 import net.manicmachine.csather.model.User;
@@ -15,11 +16,13 @@ import java.util.ArrayList;
 
 public class UserDaoImpl implements UserDao {
 
-    private static final String TAG = "UserDaoImpl";
-    private MobileDeviceDBHelper mHelper;
+    private static final String TAG = "net.manicmachine.csather.dao.impl.UserDaoImpl";
+    private static final String GEN_PREFIX = "GEN_";
+
+    private DBHelper mHelper;
 
     public UserDaoImpl(Context context) {
-        this.mHelper = new MobileDeviceDBHelper(context);
+        this.mHelper = new DBHelper(context);
     }
 
     @Override
@@ -150,5 +153,14 @@ public class UserDaoImpl implements UserDao {
                 SQLiteDatabase.CONFLICT_REPLACE);
 
         db.close();
+    }
+
+    @Override
+    public int userCount() {
+        SQLiteDatabase db = this.mHelper.getReadableDatabase();
+        long count = DatabaseUtils.queryNumEntries(db, UserContractEntry.TABLE);
+        db.close();
+
+        return (int)count;
     }
 }

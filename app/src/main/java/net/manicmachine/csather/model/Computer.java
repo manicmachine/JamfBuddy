@@ -12,7 +12,12 @@ public class Computer extends Device {
     private ArrayList<Hdd> storage;
     private ArrayList<LocalUser> localUsers;
 
-    public Computer(){}
+    public Computer(){
+        super();
+        this.mdmCapableUsers = new ArrayList<>();
+        this.storage = new ArrayList<>();
+        this.localUsers = new ArrayList<>();
+    }
 
     public ArrayList<String> getMdmCapableUsers() {
         return mdmCapableUsers;

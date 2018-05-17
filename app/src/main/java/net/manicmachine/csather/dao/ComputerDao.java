@@ -11,4 +11,5 @@ public interface ComputerDao {
 
     void deleteComputer(int computerId);
     void addComputer(Computer computer);
+    int computerCount();
 }

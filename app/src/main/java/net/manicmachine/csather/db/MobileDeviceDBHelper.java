@@ -19,8 +19,11 @@ public class MobileDeviceDBHelper extends SQLiteOpenHelper{
 
         try {
 
+            System.out.println("Mobile Device DB Helper created.");
             String createTableSql = DBHelper.buildCreateSQL(CONTRACT);
+            System.out.println("Mobile SQL: " + createTableSql);
             db.execSQL(createTableSql);
+            System.out.println("Table creation command submitted.");
 
         } catch (IllegalAccessException | NoSuchFieldException ex) {
             Log.d(TAG, "Error: Failed to create the Mobile Device's database.", ex.fillInStackTrace());

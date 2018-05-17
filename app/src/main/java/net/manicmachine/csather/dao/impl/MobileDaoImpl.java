@@ -3,11 +3,12 @@ package net.manicmachine.csather.dao.impl;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
 import net.manicmachine.csather.dao.MobileDao;
+import net.manicmachine.csather.db.DBHelper;
 import net.manicmachine.csather.db.MobileDeviceContractEntry;
-import net.manicmachine.csather.db.MobileDeviceDBHelper;
 import net.manicmachine.csather.model.MobileDevice;
 
 import java.util.ArrayList;
@@ -16,11 +17,18 @@ import java.util.Map;
 
 public class MobileDaoImpl implements MobileDao {
 
-    private static final String TAG = "MobileDaoImpl";
-    private MobileDeviceDBHelper mHelper;
+    private static final String TAG = "net.manicmachine.csather.dao.impl.MobileDaoImpl";
+    private static final String GEN_PREFIX = "GEN_";
+    private static final String HW_PREFIX = "HW_";
+    private static final String OPSYS_PREFIX = "OPSYS_";
+    private static final String PUR_PREFIX = "PUR_";
+    private static final String LOC_PREFIX = "LOC_";
+    private static final String SEC_PREFIX = "SOC_";
+
+    private DBHelper mHelper;
 
     public MobileDaoImpl(Context context) {
-        this.mHelper = new MobileDeviceDBHelper(context);
+        this.mHelper = new DBHelper(context);
     }
 
     @Override
@@ -46,18 +54,18 @@ public class MobileDaoImpl implements MobileDao {
         String[] columns = cursor.getColumnNames();
 
         for (String column : columns) {
-            if (column.contains("GEN_")) {
-                generalInfo.put(column.replace("GEN_",""), cursor.getString(cursor.getColumnIndex(column)));
-            } else if (column.contains("HW_")) {
-                hardwareInfo.put(column.replace("HW_",""), cursor.getString(cursor.getColumnIndex(column)));
-            } else if (column.contains("OPSYS_")) {
-                osInfo.put(column.replace("OPSYS_", ""), cursor.getString(cursor.getColumnIndex(column)));
-            } else if (column.contains("PUR_")) {
-                purchasingInfo.put(column.replace("PUR_", ""), cursor.getString(cursor.getColumnIndex(column)));
-            } else if (column.contains("LOC_")) {
-                locInfo.put(column.replace("LOC_", ""), cursor.getString(cursor.getColumnIndex(column)));
-            } else if (column.contains("SEC_")) {
-                securityInfo.put(column.replace("SEC_", ""), cursor.getString(cursor.getColumnIndex(column)));
+            if (column.contains(GEN_PREFIX)) {
+                generalInfo.put(column.replace(GEN_PREFIX,""), cursor.getString(cursor.getColumnIndex(column)));
+            } else if (column.contains(HW_PREFIX)) {
+                hardwareInfo.put(column.replace(HW_PREFIX,""), cursor.getString(cursor.getColumnIndex(column)));
+            } else if (column.contains(OPSYS_PREFIX)) {
+                osInfo.put(column.replace(OPSYS_PREFIX, ""), cursor.getString(cursor.getColumnIndex(column)));
+            } else if (column.contains(PUR_PREFIX)) {
+                purchasingInfo.put(column.replace(PUR_PREFIX, ""), cursor.getString(cursor.getColumnIndex(column)));
+            } else if (column.contains(LOC_PREFIX)) {
+                locInfo.put(column.replace(LOC_PREFIX, ""), cursor.getString(cursor.getColumnIndex(column)));
+            } else if (column.contains(SEC_PREFIX)) {
+                securityInfo.put(column.replace(SEC_PREFIX, ""), cursor.getString(cursor.getColumnIndex(column)));
             }
         }
 
@@ -74,8 +82,6 @@ public class MobileDaoImpl implements MobileDao {
     @Override
     public ArrayList<MobileDevice> getAllMobileDevices() {
         ArrayList<MobileDevice> mobileDevices = new ArrayList<>();
-        HashMap<String, String> generalInfo = new HashMap<>();
-        HashMap<String, String> hardwareInfo = new HashMap<>();
 
         SQLiteDatabase db = this.mHelper.getReadableDatabase();
         Cursor cursor = db.query(MobileDeviceContractEntry.TABLE,
@@ -88,18 +94,21 @@ public class MobileDaoImpl implements MobileDao {
                 null, null, null, null, null);
 
         while (cursor.moveToNext()) {
-            MobileDevice newMobileDevice = new MobileDevice();
 
-            generalInfo.put(MobileDeviceContractEntry.ID,
+            MobileDevice newMobileDevice = new MobileDevice();
+            HashMap<String, String> generalInfo = new HashMap<>();
+            HashMap<String, String> hardwareInfo = new HashMap<>();
+
+            generalInfo.put(MobileDeviceContractEntry.ID.replace(GEN_PREFIX, ""),
                     Integer.toString(cursor.getInt(cursor.getColumnIndex(MobileDeviceContractEntry.ID))));
-            generalInfo.put(MobileDeviceContractEntry.COL_MOBILE_GEN_NAME,
+            generalInfo.put(MobileDeviceContractEntry.COL_MOBILE_GEN_NAME.replace(GEN_PREFIX, ""),
                     cursor.getString(cursor.getColumnIndex(MobileDeviceContractEntry.COL_MOBILE_GEN_NAME)));
-            generalInfo.put(MobileDeviceContractEntry.COL_MOBILE_GEN_ASSET,
+            generalInfo.put(MobileDeviceContractEntry.COL_MOBILE_GEN_ASSET.replace(GEN_PREFIX, ""),
                     cursor.getString(cursor.getColumnIndex(MobileDeviceContractEntry.COL_MOBILE_GEN_ASSET)));
-            generalInfo.put(MobileDeviceContractEntry.COL_MOBILE_GEN_LAST_INV,
+            generalInfo.put(MobileDeviceContractEntry.COL_MOBILE_GEN_LAST_INV.replace(GEN_PREFIX, ""),
                     Integer.toString(cursor.getInt(cursor.getColumnIndex(MobileDeviceContractEntry.COL_MOBILE_GEN_LAST_INV))));
 
-            hardwareInfo.put(MobileDeviceContractEntry.COL_MOBILE_HW_MODEL,
+            hardwareInfo.put(MobileDeviceContractEntry.COL_MOBILE_HW_MODEL.replace(HW_PREFIX, ""),
                     cursor.getString(cursor.getColumnIndex(MobileDeviceContractEntry.COL_MOBILE_HW_MODEL)));
 
             newMobileDevice.setGeneralInfo(generalInfo);
@@ -107,8 +116,6 @@ public class MobileDaoImpl implements MobileDao {
 
             mobileDevices.add(newMobileDevice);
 
-            generalInfo.clear();
-            hardwareInfo.clear();
         }
 
         return mobileDevices;
@@ -131,43 +138,43 @@ public class MobileDaoImpl implements MobileDao {
         ContentValues values = new ContentValues();
 
         for (Map.Entry<String, String> entry : mobileDevice.getGeneralInfo().entrySet()) {
-            String column = entry.getKey();
-            String value = entry.getValue();
+            String column = GEN_PREFIX + entry.getKey().toString();
+            String value = entry.getValue().toString();
 
             values.put(column, value);
         }
 
         for (Map.Entry<String, String> entry : mobileDevice.getHardwareInfo().entrySet()) {
-            String column = entry.getKey();
-            String value = entry.getValue();
+            String column = HW_PREFIX + entry.getKey().toString();
+            String value = entry.getValue().toString();
 
             values.put(column, value);
         }
 
         for (Map.Entry<String, String> entry : mobileDevice.getOsInfo().entrySet()) {
-            String column = entry.getKey();
-            String value = entry.getValue();
+            String column = OPSYS_PREFIX + entry.getKey().toString();
+            String value = entry.getValue().toString();
 
             values.put(column, value);
         }
 
         for (Map.Entry<String, String> entry : mobileDevice.getPurchasingInfo().entrySet()) {
-            String column = entry.getKey();
-            String value = entry.getValue();
+            String column = PUR_PREFIX + entry.getKey().toString();
+            String value = entry.getValue().toString();
 
             values.put(column, value);
         }
 
         for (Map.Entry<String, String> entry : mobileDevice.getLocInfo().entrySet()) {
-            String column = entry.getKey();
-            String value = entry.getValue();
+            String column = LOC_PREFIX + entry.getKey().toString();
+            String value = entry.getValue().toString();
 
             values.put(column, value);
         }
 
         for (Map.Entry<String, String> entry : mobileDevice.getSecurityInfo().entrySet()) {
-            String column = entry.getKey();
-            String value = entry.getValue();
+            String column = SEC_PREFIX + entry.getKey().toString();
+            String value = entry.getValue().toString();
 
             values.put(column, value);
         }
@@ -178,5 +185,14 @@ public class MobileDaoImpl implements MobileDao {
                 SQLiteDatabase.CONFLICT_REPLACE);
 
         db.close();
+    }
+
+    @Override
+    public int mobileCount() {
+        SQLiteDatabase db = this.mHelper.getReadableDatabase();
+        long count = DatabaseUtils.queryNumEntries(db, MobileDeviceContractEntry.TABLE);
+        db.close();
+
+        return (int)count;
     }
 }
