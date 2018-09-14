@@ -67,6 +67,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // Takes in a dbContract class object, get it's properties and uses that to build the initial
     // create Table statement.
+    //TODO: PA-5, migrate to JSON for database schema.
     static <T> String buildCreateSQL(Class<T> dbContract) throws IllegalAccessException, NoSuchFieldException {
         ArrayList<String> properties = getProperties(dbContract);
 
@@ -111,7 +112,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         }
 
-        System.out.println("Create table sql: " + createTableSql);
         return createTableSql;
 
     }

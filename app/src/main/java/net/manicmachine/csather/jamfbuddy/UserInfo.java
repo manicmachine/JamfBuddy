@@ -1,7 +1,6 @@
 package net.manicmachine.csather.jamfbuddy;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 
 import net.manicmachine.csather.model.Computer;
 import net.manicmachine.csather.model.MobileDevice;

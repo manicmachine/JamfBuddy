@@ -20,9 +20,9 @@ import net.manicmachine.csather.network.JssApi;
 
 import java.util.ArrayList;
 
-public class DeviceListActivity extends AppCompatActivity {
+public class RecordListActivity extends AppCompatActivity {
 
-    public final static String TAG = "net.manicmachine.csather.DeviceListActivity";
+    public final static String TAG = "net.manicmachine.csather.jamfbuddy.RecordListActivity";
 
     private JssFragmentStatePagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
@@ -38,7 +38,6 @@ public class DeviceListActivity extends AppCompatActivity {
     UserDaoImpl userDao;
 
     FragmentManager fragmentManager;
-    String currentTab;
 
 
     @Override
@@ -60,15 +59,13 @@ public class DeviceListActivity extends AppCompatActivity {
             users = new ArrayList<>();
         }
 
-        currentTab = "computers";
-
         // Configure adapters, pagers and fragment managers.
         mPagerAdapter = new JssFragmentStatePagerAdapter(getSupportFragmentManager());
         fragmentManager = getSupportFragmentManager();
         mViewPager = (ViewPager)findViewById(R.id.container);
         mViewPager.setAdapter(mPagerAdapter);
 
-        // Create and populate the toolbar.
+        // Create and populateRecords the toolbar.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -80,7 +77,7 @@ public class DeviceListActivity extends AppCompatActivity {
 
     }
 
-    //TODO: Add refresh button to actionbar for on demand syncing.
+    //TODO: PA-11, Add refresh button to actionbar for on demand syncing.
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        getMenuInflater().inflate(R.menu.menu_device_list, menu);
@@ -91,19 +88,7 @@ public class DeviceListActivity extends AppCompatActivity {
 //    public boolean onOptionsItemSelected(MenuItem item) {
 //
 //        int id = item.getItemId();
-//        if (id == R.id.action_settings) {
-//
-//            switch(currentTab) {
-//                case("computers"):
-//                    computers = new ArrayList<>();
-//                    break;
-//                case("mobiledevices"):
-//                    mobileDevices = new ArrayList<>();
-//                    break;
-//                case("users"):
-//                    users = new ArrayList<>();
-//                    break;
-//            }
+//        if (id == R.id.action_settings) {}
 //
 //            return true;
 //        }

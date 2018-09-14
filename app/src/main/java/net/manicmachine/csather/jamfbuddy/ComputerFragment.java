@@ -1,6 +1,7 @@
 package net.manicmachine.csather.jamfbuddy;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
@@ -28,7 +29,7 @@ import java.util.HashMap;
 public class ComputerFragment extends Fragment {
 
     public final static String TAB_NAME = "computers";
-    public final static String TAG = "net.manicmachine.csather.ComputerFragment";
+    public final static String TAG = "net.manicmachine.csather.jamfbuddy.ComputerFragment";
 
     private RecyclerView computerRecyclerView;
     private ComputerAdapter computerAdapter;
@@ -49,7 +50,7 @@ public class ComputerFragment extends Fragment {
         computerDao = new ComputerDaoImpl(App.getContext());
 
         if (jssApi.isConnected()) {
-            jssApi.populate(TAB_NAME, new VolleyCallback() {
+            jssApi.populateRecords(TAB_NAME, new VolleyCallback() {
                 @Override
                 public void onSuccess(JSONObject response) {
                     try {
@@ -76,10 +77,10 @@ public class ComputerFragment extends Fragment {
                             newComputer.setGeneralInfo(properties);
                             computers.add(newComputer);
 
-                            for (Computer computer : computers) {
-                                computerDao.addComputer(computer);
-                            }
+                        }
 
+                        for (Computer computer : computers) {
+                            computerDao.addComputer(computer);
                         }
 
                         // Update UI
@@ -157,11 +158,17 @@ public class ComputerFragment extends Fragment {
             computerIdText = (TextView) itemView.findViewById(R.id.recordId);
             computerNameText = (TextView) itemView.findViewById(R.id.recordName);
 
-            //TODO: Switch to a more detailed view when pressed.
+            //TODO: PA-6, Switch to a more detailed view when pressed.
             recordView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.d("OnClickListener", "Computer name: " + computerNameText.getText().toString());
+
+                    Intent intent = new Intent(getContext(), DetailsActivity.class);
+                    intent.putExtra("type", "computer");
+                    intent.putExtra("recordId", Integer.parseInt(computerIdText.getText().toString()));
+
+                    startActivity(intent);
                 }
             });
         }

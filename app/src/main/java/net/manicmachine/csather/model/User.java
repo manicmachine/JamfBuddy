@@ -4,7 +4,7 @@ package net.manicmachine.csather.model;
  * Created by csather on 4/24/18.
  */
 
-public class User {
+public class User implements Record {
 
     private int id;
     private String fullName;

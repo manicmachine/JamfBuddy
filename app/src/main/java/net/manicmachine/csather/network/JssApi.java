@@ -54,7 +54,7 @@ public class JssApi {
 
      */
 
-    // TODO: Capture privileges from response and use that to create an object to represent the current user.
+    // TODO: PA-7, capture privileges from response and use that to create an object to represent the current user.
 
     public void authenticate(final VolleyCallback callback) {
 
@@ -72,6 +72,7 @@ public class JssApi {
         RequestQueueSingleton.add(request);
     }
 
+    //TODO: Implement a means to retrieve record details from the JSS.
 //    public LiveData<Computer> getComputer(int recordId) {
 //        String url = buildApiUrl("computers", recordId);
 //
@@ -106,8 +107,8 @@ public class JssApi {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        xmlCounter = 0; // reset counter
                         callback.onSuccess(response);
-
                     }
                 },
                 new Response.ErrorListener() {
@@ -139,6 +140,7 @@ public class JssApi {
 
                             // No connection can be found/unknown host errors.
                             callback.onError(HTTP_SERVICE_UNAVAIL);
+
                         } else {
 
                             if (error.networkResponse != null) {

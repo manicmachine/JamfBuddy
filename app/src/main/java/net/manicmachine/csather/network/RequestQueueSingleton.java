@@ -1,7 +1,5 @@
 package net.manicmachine.csather.network;
 
-import android.app.Application;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -15,7 +13,7 @@ public class RequestQueueSingleton {
     private RequestQueueSingleton() {}
 
     public static synchronized RequestQueue getInstance() {
-        if (null == queue) {
+        if (queue == null) {
             queue = Volley.newRequestQueue(App.getContext().getApplicationContext());
         }
 

@@ -20,9 +20,7 @@ import net.manicmachine.csather.network.VolleyCallback;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -50,7 +48,7 @@ public class UserFragment extends Fragment {
         userDao = new UserDaoImpl(App.getContext());
 
         if (jssApi.isConnected()) {
-            jssApi.populate(TAB_NAME, new VolleyCallback() {
+            jssApi.populateRecords(TAB_NAME, new VolleyCallback() {
                 @Override
                 public void onSuccess(JSONObject response) {
                     try {
@@ -78,14 +76,14 @@ public class UserFragment extends Fragment {
                             newUser.setFullName(properties.get("name").toString());
                             users.add(newUser);
 
-                            for (User user : users){
-                                userDao.addUser(user);
-                            }
-
                         }
 
-                        userInfo.setUsers(users);
+                        for (User user : users){
+                            userDao.addUser(user);
+                        }
 
+                        // Update UI
+                        userInfo.setUsers(users);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

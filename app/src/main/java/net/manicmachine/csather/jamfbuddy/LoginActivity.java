@@ -19,7 +19,7 @@ import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static final String TAG = "net.manicmachine.csather.LoginActivity";
+    public static final String TAG = "net.manicmachine.csather.jamfbuddy.LoginActivity";
 
     EditText hostnameText;
     EditText portText;
@@ -61,8 +61,8 @@ public class LoginActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                // Set userInfo, populate the jssApi object and attempt to authenticate with the JSS.
-                // Once authenticated, switch to the DeviceListActivity. Otherwise display an error
+                // Set userInfo, populateRecords the jssApi object and attempt to authenticate with the JSS.
+                // Once authenticated, switch to the RecordListActivity. Otherwise display an error
                 // to the user.
                 if (Util.isEmpty(usernameText)) {
                     isValid = false;
@@ -105,6 +105,7 @@ public class LoginActivity extends AppCompatActivity {
                     jssApi.setUsername(userInfo.getUsername());
                     jssApi.setPassword(userInfo.getPassword());
 
+                    // TODO: PA-9, ProgressDialog is deprecated. Will need to update to a ProgressBar workflow.
                     progressDialog = ProgressDialog.show(App.getContext(), "", "Contacting Jamf Pro Server...", false);
                     jssApi.authenticate(new VolleyCallback() {
 
@@ -115,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
                         public void onSuccess(JSONObject response) {
                             progressDialog.dismiss();
                             jssApi.setConnected(true);
-                            Intent intent = new Intent(getApplicationContext(), DeviceListActivity.class);
+                            Intent intent = new Intent(getApplicationContext(), RecordListActivity.class);
                             startActivity(intent);
                         }
 

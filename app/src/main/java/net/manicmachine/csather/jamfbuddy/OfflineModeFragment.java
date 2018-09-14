@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 
 import net.manicmachine.csather.dao.impl.ComputerDaoImpl;
 import net.manicmachine.csather.dao.impl.MobileDaoImpl;
@@ -46,7 +45,7 @@ public class OfflineModeFragment extends DialogFragment{
         userInfo.setMobileDevices(mobileDao.getAllMobileDevices());
         userInfo.setUsers(userDao.getAllUsers());
 
-        Intent intent = new Intent(App.getContext(), DeviceListActivity.class);
+        Intent intent = new Intent(App.getContext(), RecordListActivity.class);
         startActivity(intent);
     }
 

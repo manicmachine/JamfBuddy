@@ -21,7 +21,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -49,7 +48,7 @@ public class MobileFragment extends Fragment {
         mobileDao = new MobileDaoImpl(App.getContext());
 
         if (jssApi.isConnected()) {
-            jssApi.populate(TAB_NAME, new VolleyCallback() {
+            jssApi.populateRecords(TAB_NAME, new VolleyCallback() {
                 @Override
                 public void onSuccess(JSONObject response) {
                     try {
@@ -78,12 +77,13 @@ public class MobileFragment extends Fragment {
                             newMobileDevice.setGeneralInfo(properties);
                             mobileDevices.add(newMobileDevice);
 
-                            for (MobileDevice mobileDevice : mobileDevices) {
-                                mobileDao.addMobileDevice(mobileDevice);
-                            }
-
                         }
 
+                        for (MobileDevice mobileDevice : mobileDevices) {
+                            mobileDao.addMobileDevice(mobileDevice);
+                        }
+
+                        // Update UI
                         userInfo.setMobileDevices(mobileDevices);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
